@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="StudyRhythm.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:StudyRhythm.Mobile.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="StudyRhythm">
+
+    <TabBar>
+        <ShellContent Title="Сьогодні" Route="today"
+                      ContentTemplate="{DataTemplate views:TodayPage}" />
+        <ShellContent Title="Розклад" Route="schedule"
+                      ContentTemplate="{DataTemplate views:SchedulePage}" />
+        <ShellContent Title="ДЗ" Route="homework"
+                      ContentTemplate="{DataTemplate views:HomeworkPage}" />
+        <ShellContent Title="Сон" Route="sleep"
+                      ContentTemplate="{DataTemplate views:SleepPage}" />
+        <ShellContent Title="Pomodoro" Route="pomodoro"
+                      ContentTemplate="{DataTemplate views:PomodoroPage}" />
+    </TabBar>
+</Shell>

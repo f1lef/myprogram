@@ -1,0 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using StudyRhythm.Api.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("StudyRhythm")
+    ?? throw new InvalidOperationException("Налаштуйте ConnectionStrings:StudyRhythm.");
+
+builder.Services.AddDbContext<StudyRhythmDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+var app = builder.Build();
+
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));
+
+app.MapGet("/api/health/database", async (
+    StudyRhythmDbContext database,
+    CancellationToken cancellationToken) =>
+{
+    if (await database.Database.CanConnectAsync(cancellationToken))
+    {
+        return Results.Ok(new { status = "ok", database = "postgresql" });
+    }
+
+    return Results.Problem(
+        title: "Немає з’єднання з PostgreSQL",
+        statusCode: StatusCodes.Status503ServiceUnavailable);
+});
+
+app.Run();
