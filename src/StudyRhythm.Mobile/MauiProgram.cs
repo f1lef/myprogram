@@ -1,4 +1,7 @@
 using StudyRhythm.Core.Services;
+using StudyRhythm.Mobile.Services;
+using StudyRhythm.Mobile.ViewModels;
+using StudyRhythm.Mobile.Views;
 
 namespace StudyRhythm.Mobile;
 
@@ -14,8 +17,12 @@ public static class MauiProgram
                 font.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // Один екземпляр сервісу буде доступний майбутній ViewModel екрана «Сон».
+        // DI передає сервіси у ViewModel, а ViewModel — у сторінку «Сон».
         builder.Services.AddSingleton<SleepCalculatorService>();
+        builder.Services.AddSingleton(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
+        builder.Services.AddSingleton<SleepApiClient>();
+        builder.Services.AddTransient<SleepViewModel>();
+        builder.Services.AddTransient<SleepPage>();
 
         return builder.Build();
     }

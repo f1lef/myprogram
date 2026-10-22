@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudyRhythm.Api.Data;
+using StudyRhythm.Api.Endpoints;
+using StudyRhythm.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("StudyRhythm")
 
 builder.Services.AddDbContext<StudyRhythmDbContext>(options =>
     options.UseNpgsql(connectionString));
+builder.Services.AddSingleton<SleepCalculatorService>();
 
 var app = builder.Build();
 
@@ -50,5 +53,7 @@ app.MapGet("/api/health/schema", async (
 
     return Results.Ok(new { status = "ok", schema = "up-to-date" });
 });
+
+app.MapSleepEndpoints();
 
 app.Run();

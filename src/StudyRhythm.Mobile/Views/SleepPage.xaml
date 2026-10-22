@@ -4,8 +4,160 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Сон">
-    <VerticalStackLayout Padding="24" Spacing="8" VerticalOptions="Center">
-        <Label Text="Сон" FontSize="30" FontAttributes="Bold" />
-        <Label Text="Історія сну" FontSize="16" />
-    </VerticalStackLayout>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,32" Spacing="18">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Твій сон" FontSize="30" FontAttributes="Bold" />
+                <Label Text="Записуй години та помічай свій ритм."
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray200}}" />
+            </VerticalStackLayout>
+
+            <Border Padding="16" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Tertiary}}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Адреса сервера" FontAttributes="Bold" />
+                    <Entry Text="{Binding ApiAddress}" Keyboard="Url"
+                           Placeholder="http://10.0.2.2:5184"
+                           SemanticProperties.Description="Адреса StudyRhythm API" />
+                    <Label Text="Емулятор: 10.0.2.2. На телефоні введи IP комп’ютера в тій самій мережі."
+                           FontSize="12" />
+                    <Button Text="Оновити історію" Command="{Binding LoadCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding StatusMessage}" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+
+            <Border Padding="16" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Новий запис" FontSize="20" FontAttributes="Bold" />
+                    <Label Text="Коли ліг спати" FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <DatePicker Date="{Binding BedtimeDate}" />
+                        <TimePicker Grid.Column="1" Time="{Binding BedtimeTime}" />
+                    </Grid>
+                    <Label Text="Коли прокинувся" FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <DatePicker Date="{Binding WakeDate}" />
+                        <TimePicker Grid.Column="1" Time="{Binding WakeTime}" />
+                    </Grid>
+                    <Button Text="Зберегти сон" Command="{Binding SaveCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Цей тиждень" FontSize="20" FontAttributes="Bold" />
+                    <Label Text="{Binding AverageText}" FontAttributes="Bold" />
+                    <Label Text="Години між введеними часами, за датою пробудження"
+                           FontSize="12" />
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout Spacing="9"
+                                               BindableLayout.ItemsSource="{Binding WeekBars}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid WidthRequest="42" RowDefinitions="145,Auto" RowSpacing="4">
+                                        <VerticalStackLayout Grid.Row="0" VerticalOptions="End" Spacing="4">
+                                            <Label Text="{Binding HoursText}" FontSize="11"
+                                                   HorizontalTextAlignment="Center" />
+                                            <BoxView HeightRequest="{Binding BarHeight}" WidthRequest="25"
+                                                     HorizontalOptions="Center"
+                                                     BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Row="1" Text="{Binding DayText}"
+                                               HorizontalTextAlignment="Center" FontSize="12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Tertiary}}"
+                    IsVisible="{Binding HasAnalysis}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Останній запис: умовний аналіз"
+                           FontSize="18" FontAttributes="Bold" />
+                    <Label Text="{Binding AnalysisSummary}" />
+                    <Label Text="{Binding StageEstimate}" />
+                    <Label Text="{Binding Advice}" FontAttributes="Italic" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Коли краще лягти?" FontSize="20" FontAttributes="Bold" />
+                    <Label Text="Потрібно прокинутися" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <DatePicker Date="{Binding TargetWakeDate}" />
+                        <TimePicker Grid.Column="1" Time="{Binding TargetWakeTime}" />
+                    </Grid>
+                    <Button Text="Показати час відходу до сну"
+                            Command="{Binding CalculateBedtimesCommand}" />
+                    <VerticalStackLayout Spacing="5"
+                                         BindableLayout.ItemsSource="{Binding BedtimeSuggestions}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Якщо лягаю зараз" FontSize="20" FontAttributes="Bold" />
+                    <Button Text="Показати час пробудження"
+                            Command="{Binding CalculateWakeFromNowCommand}" />
+                    <VerticalStackLayout Spacing="5"
+                                         BindableLayout.ItemsSource="{Binding WakeSuggestions}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ModelDisclaimer}" FontSize="12"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray200}}" />
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Історія" FontSize="20" FontAttributes="Bold" />
+                <Label Text="Записів ще немає. Додай перший сон вище."
+                       IsVisible="{Binding IsHistoryEmpty}" />
+                <VerticalStackLayout Spacing="8"
+                                     BindableLayout.ItemsSource="{Binding History}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="12" StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding DateText}" FontAttributes="Bold" />
+                                        <Label Text="{Binding PeriodText}" FontSize="12" />
+                                        <Label Text="{Binding DurationText}" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="1" Text="Видалити"
+                                            BackgroundColor="Transparent"
+                                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                            Clicked="OnDeleteClicked"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
