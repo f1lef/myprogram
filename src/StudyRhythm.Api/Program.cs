@@ -27,4 +27,28 @@ app.MapGet("/api/health/database", async (
         statusCode: StatusCodes.Status503ServiceUnavailable);
 });
 
+app.MapGet("/api/health/schema", async (
+    StudyRhythmDbContext database,
+    CancellationToken cancellationToken) =>
+{
+    if (!await database.Database.CanConnectAsync(cancellationToken))
+    {
+        return Results.Problem(
+            title: "Немає з’єднання з PostgreSQL",
+            statusCode: StatusCodes.Status503ServiceUnavailable);
+    }
+
+    var pendingMigrations = await database.Database
+        .GetPendingMigrationsAsync(cancellationToken);
+
+    if (pendingMigrations.Any())
+    {
+        return Results.Problem(
+            title: "Потрібно застосувати міграцію бази даних",
+            statusCode: StatusCodes.Status503ServiceUnavailable);
+    }
+
+    return Results.Ok(new { status = "ok", schema = "up-to-date" });
+});
+
 app.Run();
