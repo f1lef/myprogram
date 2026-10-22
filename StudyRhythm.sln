@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyRhythm.Api", "src\Stud
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyRhythm.Mobile", "src\StudyRhythm.Mobile\StudyRhythm.Mobile.csproj", "{804BB043-001D-461A-B208-2514CE7C81D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyRhythm.Core", "src\StudyRhythm.Core\StudyRhythm.Core.csproj", "{63DCD302-EB9C-4111-A406-1554891BE4B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{804BB043-001D-461A-B208-2514CE7C81D1}.Release|x64.Build.0 = Release|Any CPU
 		{804BB043-001D-461A-B208-2514CE7C81D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{804BB043-001D-461A-B208-2514CE7C81D1}.Release|x86.Build.0 = Release|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Debug|x64.Build.0 = Debug|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Debug|x86.Build.0 = Debug|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Release|x64.ActiveCfg = Release|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Release|x64.Build.0 = Release|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Release|x86.ActiveCfg = Release|Any CPU
+		{63DCD302-EB9C-4111-A406-1554891BE4B4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,5 +64,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2F7614D6-BF6B-4B00-B50B-9651DF2969F8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{804BB043-001D-461A-B208-2514CE7C81D1} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{63DCD302-EB9C-4111-A406-1554891BE4B4} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

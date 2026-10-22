@@ -17,6 +17,7 @@ Android-застосунок (.NET MAUI 8) → ASP.NET Core Web API (.NET 8) →
 
 - `src/StudyRhythm.Mobile` — Android-застосунок із п’ятьма вкладками Shell.
 - `src/StudyRhythm.Api` — API та налаштування підключення до PostgreSQL.
+- `src/StudyRhythm.Core` — розрахунки, які працюють на телефоні без мережі.
 - `compose.yaml` — PostgreSQL для локальної розробки. Пароль у цьому файлі
   призначений лише для локального запуску. Порт бази доступний тільки з цього ПК.
 
@@ -55,6 +56,69 @@ dotnet tool run dotnet-ef database update --project src/StudyRhythm.Api --startu
 API. Очікувана відповідь: `{"status":"ok","schema":"up-to-date"}`.
 
 Робочі екрани та API для введення даних з’являться в наступних частинах.
+
+## Частина 3 — калькулятор сну
+
+У `src/StudyRhythm.Core/Services/SleepCalculatorService.cs` є три методи:
+
+| Метод | Що повертає |
+| --- | --- |
+| `GetBedtimeSuggestions` | Коли лягти, якщо відомий час пробудження |
+| `GetWakeSuggestions` | Коли прокинутися, якщо відомий час відходу до сну |
+| `Analyze` | Тривалість запису, умовні цикли та коротку пораду |
+
+`StudyRhythm.Core` підключений до мобільного проєкту як `ProjectReference`.
+Додаткових NuGet-пакетів для цього кроку немає. Обчислення виконуються на
+пристрої, а зберігання історії буде доступне через API і PostgreSQL.
+
+Формула для варіанта з `n` циклами: `15 хв + n × 90 хв`. Сервіс пропонує
+`n = 4, 5, 6`. Наприклад, для пробудження о 07:00 він покаже 00:45,
+23:15 і 21:45 попереднього вечора відповідно. Якщо лягти о 23:00,
+підказки для пробудження: 05:15, 06:45 і 08:15. Для переходу через зміну
+годинника передайте місцевий `TimeZoneInfo`, а час передавайте як
+`DateTimeOffset` із правильним зсувом від UTC.
+
+Ось короткий приклад виклику з C#:
+
+```csharp
+using StudyRhythm.Core.Services;
+
+var calculator = new SleepCalculatorService();
+var zone = TimeZoneInfo.Local;
+var wakeAt = new DateTimeOffset(2026, 10, 23, 7, 0, 0, TimeSpan.FromHours(3));
+
+foreach (var option in calculator.GetBedtimeSuggestions(wakeAt, zone))
+{
+    Console.WriteLine($"{option.CycleCount} циклів: {option.SuggestedAt:dd.MM HH:mm}");
+}
+
+var bedtime = new DateTimeOffset(2026, 10, 22, 23, 0, 0, TimeSpan.FromHours(3));
+var analysis = calculator.Analyze(bedtime, wakeAt);
+Console.WriteLine($"Час у ліжку: {analysis.TimeInBed.TotalHours:F1} год");
+Console.WriteLine(analysis.Advice);
+Console.WriteLine(analysis.Disclaimer);
+```
+
+`TimeInBed` означає час між двома введеними мітками. `EstimatedSleep`
+віднімає умовні 15 хв на засинання. `FullModelCycles` — кількість повних
+90-хвилинних відрізків. Значення `IllustrativeLightSleep`,
+`IllustrativeDeepSleep` та `IllustrativeRemSleep` показують лише приклад
+розподілу часу за загальним шаблоном для дорослих (55 %, 20 %, 25 %).
+Це **не персональний аналіз фаз** і не медичний висновок. За часом, коли
+людина лягла й прокинулася, неможливо дізнатися реальні фази сну або
+гарантувати пробудження саме в легкій фазі. Згідно з
+[NHLBI](https://www.nhlbi.nih.gov/health/sleep/stages-of-sleep), цикл може
+тривати 80–100 хвилин, а стадії визначають за вимірюваннями під час
+дослідження сну. Орієнтовні частки стадій наведено в
+[огляді інтерпретації досліджень сну](https://pmc.ncbi.nlm.nih.gov/articles/PMC4246141/).
+
+Сервіс перевіряє, що пробудження відбулося пізніше за відхід до сну, а
+запис тривав не більше 24 годин. Для цієї бібліотеки достатньо .NET 8 SDK;
+Android-емулятор і PostgreSQL для перевірки формул не потрібні:
+
+```powershell
+dotnet build src/StudyRhythm.Core/StudyRhythm.Core.csproj
+```
 
 ## Як перевірити каркас
 
